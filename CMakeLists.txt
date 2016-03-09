@@ -74,7 +74,7 @@ option(WITH_MODULES "Add the dynamic modules support" ON)
 option(WITH_WALKER "Enable xmlDocWalker api" ON)
 option(WITH_PYTHON "Build Python bindings" OFF)
 
-include(find_anyproject)
+include(FindAnyProject)
 
 if(UNIX)
     set(MODULE_EXTENSION ".so")
