@@ -35,7 +35,7 @@ include (TestBigEndian)
 include (CheckCSourceCompiles)
 include (CheckStructHasMember)
 
-if(CMAKE_GENERATOR_TOOLSET MATCHES "*xp")
+if(CMAKE_GENERATOR_TOOLSET MATCHES "v([0-9]+)_xp")
     add_definitions(-D_WIN32_WINNT=0x0501)
 endif()
 
