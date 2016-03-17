@@ -35,6 +35,10 @@ include (TestBigEndian)
 include (CheckCSourceCompiles)
 include (CheckStructHasMember)
 
+if(CMAKE_GENERATOR_TOOLSET MATCHES "*xp")
+    add_definitions(-D_WIN32_WINNT=0x0501)
+endif()
+
 check_include_files("ansidecl.h" HAVE_ANSIDECL_H)
 check_include_files("arpa/inet.h" HAVE_ARPA_INET_H)
 check_include_files("arpa/nameser.h" HAVE_ARPA_NAMESER_H)
