@@ -39,8 +39,8 @@ set(INSTALL_BIN_DIR ${CMAKE_INSTALL_BINDIR} CACHE INTERNAL "Installation directo
 set(INSTALL_LIB_DIR ${CMAKE_INSTALL_LIBDIR} CACHE INTERNAL "Installation directory for libraries" FORCE)
 set(INSTALL_INC_DIR ${CMAKE_INSTALL_INCLUDEDIR} CACHE INTERNAL "Installation directory for headers" FORCE)
 
-FIND_LIBRARY(GEOTIFF_LIBRARY NAMES "gdal")
-message(STATUS "${GEOTIFF_LIBRARY} - gdal")
+include(util)
+report_version(${PROJECT_NAME} ${VERSION}) 
 
 set(VERSION "2.9.3")
 set(LIBXML_VERSION_NUMBER 20903)
@@ -228,9 +228,6 @@ if(WIN32)
     
 endif()
 
-include(util)
-report_version(${PROJECT_NAME} ${VERSION})    
-    
 
 if(UNIX)
 #    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror")
