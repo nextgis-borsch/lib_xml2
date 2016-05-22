@@ -39,12 +39,12 @@ set(INSTALL_BIN_DIR ${CMAKE_INSTALL_BINDIR} CACHE INTERNAL "Installation directo
 set(INSTALL_LIB_DIR ${CMAKE_INSTALL_LIBDIR} CACHE INTERNAL "Installation directory for libraries" FORCE)
 set(INSTALL_INC_DIR ${CMAKE_INSTALL_INCLUDEDIR} CACHE INTERNAL "Installation directory for headers" FORCE)
 
-include(util)
-report_version(${PROJECT_NAME} ${VERSION}) 
-
 set(VERSION "2.9.3")
 set(LIBXML_VERSION_NUMBER 20903)
 set(LIBXML_VERSION_EXTRA "-GITCVE-2015-8242")
+
+include(util)
+report_version(${PROJECT_NAME} ${VERSION}) 
 
 option(WITH_TRIO "Enable TRIO string manipulator" OFF)
 option(WITH_THREADS "Add multithread support" ON)
