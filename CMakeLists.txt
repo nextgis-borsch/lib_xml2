@@ -30,6 +30,7 @@ project(xml2 C)
 
 # some init settings
 set(CMAKE_COLOR_MAKEFILE ON)
+
 # set path to additional CMake modules
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
 
@@ -107,7 +108,7 @@ find_anyproject(LibLZMA)
 
 include(configure)
 
-configure_file(${CMAKE_MODULE_PATH}/cmake_uninstall.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake IMMEDIATE @ONLY)
+configure_file(${CMAKE_SOURCE_DIR}/cmake/cmake_uninstall.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake IMMEDIATE @ONLY)
 
 include_directories ( ${CMAKE_CURRENT_SOURCE_DIR}/include/ )
 include_directories ( ${CMAKE_CURRENT_SOURCE_DIR} )
