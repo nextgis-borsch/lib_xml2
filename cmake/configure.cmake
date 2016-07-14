@@ -254,10 +254,10 @@ set(PACKAGE_NAME "lib${PACKAGE}")
 set(PACKAGE_VERSION ${VERSION})
 set(PACKAGE_STRING "${PACKAGE_NAME} ${PACKAGE_VERSION}")
 
-configure_file(${CMAKE_MODULE_PATH}/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h IMMEDIATE @ONLY)
+configure_file(${CMAKE_SOURCE_DIR}/cmake/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h IMMEDIATE @ONLY)
 add_definitions(-DHAVE_CONFIG_H)
 
-configure_file(${CMAKE_MODULE_PATH}/xmlversion.h.in ${CMAKE_CURRENT_BINARY_DIR}/include/libxml/xmlversion.h IMMEDIATE @ONLY )
+configure_file(${CMAKE_SOURCE_DIR}/cmake/xmlversion.h.in ${CMAKE_CURRENT_BINARY_DIR}/include/libxml/xmlversion.h IMMEDIATE @ONLY )
 if(UNIX)
-    configure_file(${CMAKE_MODULE_PATH}/xml2-config.in ${CMAKE_CURRENT_BINARY_DIR}/xml2-config IMMEDIATE @ONLY)
+    configure_file(${CMAKE_SOURCE_DIR}/cmake/xml2-config.in ${CMAKE_CURRENT_BINARY_DIR}/xml2-config IMMEDIATE @ONLY)
 endif()
