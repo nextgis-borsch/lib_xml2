@@ -45,7 +45,7 @@ set(LIBXML_VERSION_NUMBER 20903)
 set(LIBXML_VERSION_EXTRA "-GITCVE-2015-8242")
 
 include(util)
-report_version(${PROJECT_NAME} ${VERSION}) 
+report_version(${PROJECT_NAME} ${VERSION})
 
 option(WITH_TRIO "Enable TRIO string manipulator" OFF)
 option(WITH_THREADS "Add multithread support" ON)
@@ -92,7 +92,7 @@ elseif(WIN32)
     if (MSVC)
         add_definitions (-D_CRT_NONSTDC_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS -D_CRT_NON_CONFORMING_SWPRINTFS -D_CRT_SECURE_NO_DEPRECATE)
     endif()
-endif()        
+endif()
 
 if(WITH_THREADS)
   find_package(Threads REQUIRED)
@@ -161,7 +161,7 @@ set(PUBLIC_HDRS_LIBXML2
     include/libxml/xmlschemas.h
     include/libxml/xmlschemastypes.h
     include/libxml/xmlstring.h
-    include/libxml/xmlunicode.h		
+    include/libxml/xmlunicode.h
     include/libxml/xmlwriter.h
     include/libxml/xpath.h
     include/libxml/xpathInternals.h
@@ -225,8 +225,8 @@ if(WIN32)
     set(SRCS ${SRCS}
         # include/win32config.h wince stuf
         include/wsockcompat.h
-    )	
-    
+    )
+
 endif()
 
 
@@ -239,12 +239,12 @@ if(BUILD_SHARED_LIBS)
     add_library(${LIB_NAME} SHARED ${SRCS} ${PUBLIC_HDRS} ${PUBLIC_HDRS_LIBXML2} ${PRIVATE_HDRS})
     set_target_properties(${LIB_NAME} PROPERTIES DEFINE_SYMBOL XML2_DLL)
 #    set_target_properties(${LIB_NAME} PROPERTIES SOVERSION 1)
-else()    
+else()
     add_library(${LIB_NAME} STATIC ${SRCS} ${PUBLIC_HDRS} ${PUBLIC_HDRS_LIBXML2} ${PRIVATE_HDRS})
 #    set_target_properties(${LIB_NAME} PROPERTIES SOVERSION 1)
-endif()   
+endif()
 
-target_link_extlibraries(${LIB_NAME}) 
+target_link_extlibraries(${LIB_NAME})
 
 if (REGISTER_PACKAGE)
     export(TARGETS ${LIB_NAME} FILE ${LIB_NAME}-exports.cmake)
@@ -259,8 +259,7 @@ if (REGISTER_PACKAGE)
     configure_package_config_file(
         ${CMAKE_SOURCE_DIR}/cmake/PackageConfig.cmake.in
         ${CMAKE_CURRENT_BINARY_DIR}/${EXPORT_PACKAGE_NAME}Config.cmake
-        INSTALL_DESTINATION ${INSTALL_LIB_DIR}/cmake
-        PATH_VARS INSTALL_INC_DIR )
+    INSTALL_DESTINATION ${CMAKE_CURRENT_BINARY_DIR} )
     write_basic_package_version_file(
         ${CMAKE_CURRENT_BINARY_DIR}/${EXPORT_PACKAGE_NAME}ConfigVersion.cmake
         VERSION ${VERSION}
@@ -283,7 +282,7 @@ if(UNIX)
 endif()
 
 if(NOT SKIP_INSTALL_LIBRARIES AND NOT SKIP_INSTALL_ALL )
-    install(TARGETS ${LIB_NAME} 
+    install(TARGETS ${LIB_NAME}
         RUNTIME DESTINATION "${INSTALL_BIN_DIR}"
         ARCHIVE DESTINATION "${INSTALL_LIB_DIR}"
         LIBRARY DESTINATION "${INSTALL_LIB_DIR}" )
@@ -292,4 +291,3 @@ if(NOT SKIP_INSTALL_HEADERS AND NOT SKIP_INSTALL_ALL )
     install(FILES ${PUBLIC_HDRS} DESTINATION "${INSTALL_INC_DIR}")
     install(FILES ${PUBLIC_HDRS_LIBXML2} DESTINATION "${INSTALL_INC_DIR}/libxml")
 endif()
-
