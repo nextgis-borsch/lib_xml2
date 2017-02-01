@@ -47,6 +47,10 @@ set(LIBXML_VERSION_EXTRA "-GITCVE-2015-8242")
 include(util)
 report_version(${PROJECT_NAME} ${VERSION})
 
+# Store version string in file for installer needs
+file(TIMESTAMP ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt VERSION_DATETIME "%Y-%m-%d %H:%M:%S" UTC)
+file(WRITE ${CMAKE_BINARY_DIR}/version.str "${VERSION}\n${VERSION_DATETIME}")
+
 option(WITH_TRIO "Enable TRIO string manipulator" OFF)
 option(WITH_THREADS "Add multithread support" ON)
 option(WITH_THREAD_ALLOC "add per-thread memory" OFF)
