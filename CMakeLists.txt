@@ -26,63 +26,125 @@
 
 cmake_minimum_required(VERSION 2.8.12 FATAL_ERROR)
 
-project(xml2 C)
+project(xml2)
+
+if(NOT DEFINED PACKAGE_VENDOR)
+    set(PACKAGE_VENDOR NextGIS)
+endif()
+
+if(NOT DEFINED PACKAGE_BUGREPORT)
+    set(PACKAGE_BUGREPORT info@nextgis.com)
+endif()
 
 # some init settings
 set(CMAKE_COLOR_MAKEFILE ON)
-
 # set path to additional CMake modules
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
 
-include(GNUInstallDirs)
+if(OSX_FRAMEWORK AND (BUILD_SHARED_LIBS OR BUILD_STATIC_LIBS))
+  message(FATAL_ERROR "Only OSX_FRAMEWORK key or any or both BUILD_SHARED_LIBS
+                       and BUILD_STATIC_LIBS keys are permitted")
+endif()
 
-set(INSTALL_BIN_DIR ${CMAKE_INSTALL_FULL_BINDIR} CACHE INTERNAL "Installation directory for executables" FORCE)
-set(INSTALL_LIB_DIR ${CMAKE_INSTALL_FULL_LIBDIR} CACHE INTERNAL "Installation directory for libraries" FORCE)
-set(INSTALL_INC_DIR ${CMAKE_INSTALL_FULL_INCLUDEDIR} CACHE INTERNAL "Installation directory for headers" FORCE)
+if(OSX_FRAMEWORK)
+    set(INSTALL_BIN_DIR "bin" CACHE INTERNAL "Installation directory for executables" FORCE)
+    set(INSTALL_LIB_DIR "Library/Frameworks" CACHE INTERNAL "Installation directory for libraries" FORCE)
+    set(INSTALL_INC_DIR "${INSTALL_LIB_DIR}/${PROJECT_NAME}.framework/Headers" CACHE INTERNAL "Installation directory for headers" FORCE)
+    set(SKIP_INSTALL_HEADERS ON)
+    set(SKIP_INSTALL_EXECUTABLES ON)
+    set(SKIP_INSTALL_FILES ON)
+    set(SKIP_INSTALL_EXPORT ON)
+    set(CMAKE_MACOSX_RPATH ON)
+else()
+    include(GNUInstallDirs)
 
-set(VERSION "2.9.3")
-set(LIBXML_VERSION_NUMBER 20903)
-set(LIBXML_VERSION_EXTRA "-GITCVE-2015-8242")
+    set(INSTALL_BIN_DIR ${CMAKE_INSTALL_BINDIR} CACHE INTERNAL "Installation directory for executables" FORCE)
+    set(INSTALL_LIB_DIR ${CMAKE_INSTALL_LIBDIR} CACHE INTERNAL "Installation directory for libraries" FORCE)
+    set(INSTALL_INC_DIR ${CMAKE_INSTALL_INCLUDEDIR} CACHE INTERNAL "Installation directory for headers" FORCE)
+    set(INSTALL_SHARE_DIR ${CMAKE_INSTALL_DATADIR} CACHE INTERNAL "Shared files directory" FORCE)
+    set(INSTALL_DATA_DIR "${INSTALL_SHARE_DIR}/proj" CACHE INTERNAL "Shared files directory" FORCE)
+    set(INSTALL_MAN_DIR ${CMAKE_INSTALL_MANDIR} CACHE INTERNAL "Man files directory" FORCE)
+    set(INSTALL_PKGCONFIG_DIR "${INSTALL_LIB_DIR}/pkgconfig" CACHE INTERNAL "Installation directory for pkgconfig (.pc) files" FORCE)
+    set(INSTALL_CMAKECONF_DIR ${CMAKE_INSTALL_DATADIR}/${PROJECT_NAME}/CMake CACHE INTERNAL "Installation directory for cmake config files" FORCE)
+endif()
 
 include(util)
+# Version information
+check_version(PROJECT_VERSION_MAJOR PROJECT_VERSION_MINOR PROJECT_VERSION_MICRO PROJECT_VERSION_FULL PROJECT_VERSION_NUM)
+set(VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_MICRO}")
+if(OSX_FRAMEWORK)
+    set(FRAMEWORK_VERSION "${PROJECT_VERSION_MAJOR}")
+
+    set(INSTALL_MAN_DIR ${INSTALL_LIB_DIR}/${PROJECT_NAME}.framework/Versions/${FRAMEWORK_VERSION}/Resources/man CACHE INTERNAL "Man files directory" FORCE)
+    set(INSTALL_CMAKECONF_DIR ${INSTALL_LIB_DIR}/${PROJECT_NAME}.framework/Versions/${FRAMEWORK_VERSION}/Resources/CMake CACHE INTERNAL "Installation directory for cmake config files" FORCE)
+endif()
 report_version(${PROJECT_NAME} ${VERSION})
 
-# Store version string in file for installer needs
-file(TIMESTAMP ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt VERSION_DATETIME "%Y-%m-%d %H:%M:%S" UTC)
-file(WRITE ${CMAKE_BINARY_DIR}/version.str "${VERSION}\n${VERSION_DATETIME}")
+# TODO: Need to change ${name} value if ${name}_OPT changes
+macro(ADD_OPTION name text value)
+    option(${name}_OPT ${text} ${value})
+    if(${value})
+        set(${name} 1)
+    else()
+        set(${name} 0)
+    endif()
+    # message("set(${name} ${${name}})")
+endmacro()
 
-option(WITH_TRIO "Enable TRIO string manipulator" OFF)
-option(WITH_THREADS "Add multithread support" ON)
-option(WITH_THREAD_ALLOC "add per-thread memory" OFF)
-option(WITH_TREE "Enable tree api" ON)
-option(WITH_OUTPUT "Enable serialization support" ON)
-option(WITH_PUSH "Enable push api" ON)
-option(WITH_READER "Enable xmlReader api" ON)
-option(WITH_PATTERN "Enable xmlPattern api" ON)
-option(WITH_WRITER "Enable xmlWriter api" ON)
-option(WITH_SAX1 "Enable SAX1 api" ON)
-option(WITH_FTP "Enable FTP client" ON)
-option(WITH_HTTP "Enable HTTP client" ON)
-option(WITH_VALID "Enable DTD validation support" ON)
-option(WITH_HTML "Add the HTML support" ON)
-option(WITH_LEGACY "Enable deprecated APIs" ON)
-option(WITH_C14N "Enable C14N support" ON)
-option(WITH_CATALOG "Enable catalog support" ON)
-option(WITH_DOCB "Enable DocBook support" ON)
-option(WITH_XPATH "Enable XPath support" ON)
-option(WITH_XPTR "Enable XPointer support" ON)
-option(WITH_XINCLUDE "Enable XInclude support" ON)
-option(WITH_ICU "Add ICU support" OFF)
-option(WITH_ISO8859X "Enable iso8859x support" ON)
-option(WITH_DEBUG "add the debugging module" ON)
-option(WITH_MEM_DEBUG "add the memory debugging module" OFF)
-option(WITH_RUN_DEBUG "add the runtime debugging module" OFF)
-option(WITH_REGEXPS "Enable regular expressions" ON)
-option(WITH_SCHEMAS "Enable XML Schema support" ON)
-option(WITH_SCHEMATRON "Add Schematron support" ON)
-option(WITH_MODULES "Add the dynamic modules support" ON)
-option(WITH_WALKER "Enable xmlDocWalker api" ON)
-option(WITH_PYTHON "Build Python bindings" OFF)
+add_option(WITH_TRIO "Enable TRIO string manipulator" OFF)
+add_option(WITH_THREADS "Add multithread support" ON)
+add_option(WITH_THREAD_ALLOC "add per-thread memory" OFF)
+add_option(WITH_TREE "Enable tree api" ON)
+add_option(WITH_OUTPUT "Enable serialization support" ON)
+add_option(WITH_PUSH "Enable push api" ON)
+add_option(WITH_READER "Enable xmlReader api" ON)
+add_option(WITH_PATTERN "Enable xmlPattern api" ON)
+add_option(WITH_WRITER "Enable xmlWriter api" ON)
+add_option(WITH_SAX1 "Enable SAX1 api" ON)
+add_option(WITH_FTP "Enable FTP client" ON)
+add_option(WITH_HTTP "Enable HTTP client" ON)
+add_option(WITH_VALID "Enable DTD validation support" ON)
+add_option(WITH_HTML "Add the HTML support" ON)
+add_option(WITH_LEGACY "Enable deprecated APIs" ON)
+add_option(WITH_C14N "Enable C14N support" ON)
+add_option(WITH_CATALOG "Enable catalog support" ON)
+add_option(WITH_DOCB "Enable DocBook support" ON)
+add_option(WITH_XPATH "Enable XPath support" ON)
+add_option(WITH_XPTR "Enable XPointer support" ON)
+add_option(WITH_XINCLUDE "Enable XInclude support" ON)
+add_option(WITH_ICU "Add ICU support" OFF)
+add_option(WITH_ISO8859X "Enable iso8859x support" ON)
+add_option(WITH_DEBUG "add the debugging module" ON)
+add_option(WITH_MEM_DEBUG "add the memory debugging module" OFF)
+add_option(WITH_RUN_DEBUG "add the runtime debugging module" OFF)
+add_option(WITH_REGEXPS "Enable regular expressions" ON)
+add_option(WITH_SCHEMAS "Enable XML Schema support" ON)
+add_option(WITH_SCHEMATRON "Add Schematron support" ON)
+add_option(WITH_MODULES "Add the dynamic modules support" ON)
+add_option(WITH_WALKER "Enable xmlDocWalker api" ON)
+add_option(WITH_PYTHON "Build Python bindings" OFF)
+add_option(WITH_FEXCEPTIONS "Add GCC flag -fexceptions for C++ exceptions" OFF)
+add_option(WITH_HISTORY "add history support to xmllint shell" OFF)
+add_option(WITH_COVERAGE "build for code coverage with GCC" OFF)
+
+if(WITH_SCHEMAS)
+    set(WITH_PATTERN 1)
+    set(WITH_REGEXPS 1)
+endif()
+
+if(WITH_SCHEMATRON)
+    set(WITH_PATTERN 1)
+    set(WITH_TREE 1)
+    set(WITH_XPATH 1)
+endif()
+
+if(WITH_READER)
+    set(WITH_PUSH 1)
+endif()
+
+if(WITH_XPTR)
+    set(WITH_XPATH 1)
+endif()
 
 include(FindAnyProject)
 
@@ -107,12 +169,30 @@ if(WITH_THREADS)
 endif()
 
 find_anyproject(ZLIB)
+if(ZLIB_FOUND)
+    set(WITH_ZLIB 1)
+    add_definitions(-DHAVE_ZLIB_H)
+else()
+    set(WITH_ZLIB 0)
+endif()
 find_anyproject(ICONV)
+if(ICONV_FOUND)
+    set(WITH_ICONV 1)
+    add_definitions(-DHAVE_ICONV_H)
+else()
+    set(WITH_ICONV 0)
+endif()
 find_anyproject(LibLZMA)
+if(LIBLZMA_FOUND)
+    set(WITH_LZMA 1)
+    add_definitions(-DHAVE_LZMA_H)
+else()
+    set(WITH_LZMA 0)
+endif()
 
 include(configure)
 
-configure_file(${CMAKE_SOURCE_DIR}/cmake/cmake_uninstall.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake IMMEDIATE @ONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmake_uninstall.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake IMMEDIATE @ONLY)
 
 include_directories ( ${CMAKE_CURRENT_SOURCE_DIR}/include/ )
 include_directories ( ${CMAKE_CURRENT_SOURCE_DIR} )
@@ -125,26 +205,18 @@ set(PUBLIC_HDRS
 
 set(PUBLIC_HDRS_LIBXML2
     ${CMAKE_CURRENT_BINARY_DIR}/include/libxml/xmlversion.h
-    include/libxml/c14n.h
-    include/libxml/catalog.h
     include/libxml/chvalid.h
-    include/libxml/debugXML.h
     include/libxml/dict.h
     include/libxml/DOCBparser.h
     include/libxml/encoding.h
     include/libxml/entities.h
     include/libxml/globals.h
     include/libxml/hash.h
-    include/libxml/HTMLparser.h
-    include/libxml/HTMLtree.h
     include/libxml/list.h
-    include/libxml/nanoftp.h
-    include/libxml/nanohttp.h
     include/libxml/parser.h
     include/libxml/parserInternals.h
     include/libxml/pattern.h
     include/libxml/relaxng.h
-    include/libxml/SAX.h
     include/libxml/SAX2.h
     include/libxml/schemasInternals.h
     include/libxml/threads.h
@@ -162,8 +234,6 @@ set(PUBLIC_HDRS_LIBXML2
     include/libxml/xmlreader.h
     include/libxml/xmlregexp.h
     include/libxml/xmlsave.h
-    include/libxml/xmlschemas.h
-    include/libxml/xmlschemastypes.h
     include/libxml/xmlstring.h
     include/libxml/xmlunicode.h
     include/libxml/xmlwriter.h
@@ -180,50 +250,117 @@ set(PRIVATE_HDRS
 )
 
 set(SRCS
-    c14n.c
-    catalog.c
-    chvalid.c
-    buf.c
-    debugXML.c
-    dict.c
-    DOCBparser.c
-    encoding.c
     entities.c
+    encoding.c
     error.c
-    globals.c
-    hash.c
-    HTMLparser.c
-    HTMLtree.c
-    legacy.c
-    list.c
-    nanoftp.c
-    nanohttp.c
-    parser.c
     parserInternals.c
-    pattern.c
-    relaxng.c
+    parser.c
     SAX2.c
-    SAX.c
-    threads.c
     tree.c
-    uri.c
-    valid.c
-    xinclude.c
-    xlink.c
+    hash.c
+    list.c
     xmlIO.c
     xmlmemory.c
-    xmlreader.c
-    xmlregexp.c
-    xmlsave.c
-    xmlschemas.c
-    xmlschemastypes.c
-    xmlunicode.c
-    xmlwriter.c
+    uri.c
+    valid.c
+    xlink.c
     xpath.c
     xpointer.c
+    xinclude.c
+    globals.c
+    threads.c
     xmlstring.c
+    buf.c
+    xmlregexp.c
+    xmlunicode.c
+    xmlreader.c
+    relaxng.c
+    dict.c
+    xmlwriter.c
+    legacy.c
+    chvalid.c
+    pattern.c
+    xmlsave.c
+    xmlmodule.c
+    schematron.c
     xzlib.c
 )
+
+if(WITH_C14N)
+    set(SRCS ${SRCS}
+        c14n.c
+    )
+    set(PUBLIC_HDRS_LIBXML2 ${PUBLIC_HDRS_LIBXML2}
+        include/libxml/c14n.h
+    )
+endif()
+
+if(WITH_CATALOG)
+    set(SRCS ${SRCS}
+        catalog.c
+    )
+    set(PUBLIC_HDRS_LIBXML2 ${PUBLIC_HDRS_LIBXML2}
+        include/libxml/catalog.h
+    )
+endif()
+
+if(WITH_HTML)
+    set(SRCS ${SRCS}
+        HTMLparser.c
+        HTMLtree.c
+    )
+    set(PUBLIC_HDRS_LIBXML2 ${PUBLIC_HDRS_LIBXML2}
+        include/libxml/HTMLparser.h
+        include/libxml/HTMLtree.h
+    )
+endif()
+
+if(WITH_SCHEMAS)
+    set(SRCS ${SRCS}
+        xmlschemas.c
+        xmlschemastypes.c
+    )
+    set(PUBLIC_HDRS_LIBXML2 ${PUBLIC_HDRS_LIBXML2}
+        include/libxml/xmlschemas.h
+        include/libxml/xmlschemastypes.h
+    )
+endif()
+
+if(WITH_SAX1)
+    set(SRCS ${SRCS}
+        SAX.c
+    )
+    set(PUBLIC_HDRS_LIBXML2 ${PUBLIC_HDRS_LIBXML2}
+        include/libxml/SAX.h
+    )
+endif()
+
+if(WITH_DEBUG)
+    set(SRCS ${SRCS}
+        debugXML.c
+    )
+    set(PUBLIC_HDRS_LIBXML2 ${PUBLIC_HDRS_LIBXML2}
+        include/libxml/debugXML.h
+    )
+endif()
+
+if(WITH_HTTP)
+    set(SRCS ${SRCS}
+        nanohttp.c
+    )
+    set(PUBLIC_HDRS_LIBXML2 ${PUBLIC_HDRS_LIBXML2}
+        include/libxml/nanohttp.h
+    )
+endif()
+
+if(WITH_FTP)
+    set(SRCS ${SRCS}
+        nanoftp.c
+    )
+    set(PUBLIC_HDRS_LIBXML2 ${PUBLIC_HDRS_LIBXML2}
+        include/libxml/nanoftp.h
+    )
+endif()
 
 if(WIN32)
     set(SRCS ${SRCS}
@@ -231,67 +368,154 @@ if(WIN32)
         include/wsockcompat.h
     )
 
+    # generate def file
+    execute_process(COMMAND ${CMAKE_C_COMPILER_LAUNCHER}
+        ${CMAKE_C_FLAGS} win32/libxml2.def.src > ${CMAKE_CURRENT_BINARY_DIR}/libxml2.def
+    )
+    set(SRCS ${SRCS}
+        ${CMAKE_CURRENT_BINARY_DIR}/libxml2.def
+    )
 endif()
 
+set(LIB_NAME lib${PROJECT_NAME})
 
-if(UNIX)
-#    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror")
-endif()
-
-set(LIB_NAME ${PROJECT_NAME})
 if(BUILD_SHARED_LIBS)
     add_library(${LIB_NAME} SHARED ${SRCS} ${PUBLIC_HDRS} ${PUBLIC_HDRS_LIBXML2} ${PRIVATE_HDRS})
-    set_target_properties(${LIB_NAME} PROPERTIES DEFINE_SYMBOL XML2_DLL)
-#    set_target_properties(${LIB_NAME} PROPERTIES SOVERSION 1)
+    if(MSVC)
+        set_target_properties(${LIB_NAME} PROPERTIES IMPORT_SUFFIX "_i.lib")
+    endif()
+
+    set_target_properties (${LIB_NAME} PROPERTIES
+        VERSION ${VERSION}
+        DEFINE_SYMBOL XML2_DLL)
+elseif(OSX_FRAMEWORK)
+    add_library(${LIB_NAME} SHARED ${SRCS} ${PUBLIC_HDRS} ${PUBLIC_HDRS_LIBXML2} ${PRIVATE_HDRS})
+    set_property(SOURCE ${PUBLIC_HDRS_LIBXML2}
+        PROPERTY MACOSX_PACKAGE_LOCATION "Headers/libxml"
+    )
+    set_target_properties(${LIB_NAME} PROPERTIES
+        FRAMEWORK TRUE
+        FRAMEWORK_VERSION "${FRAMEWORK_VERSION}"
+        VERSION ${VERSION}
+        MACOSX_FRAMEWORK_SHORT_VERSION_STRING ${VERSION}
+        MACOSX_FRAMEWORK_BUNDLE_VERSION ${VERSION}
+        MACOSX_FRAMEWORK_IDENTIFIER org.xmlsoft.libxml2
+        XCODE_ATTRIBUTE_INSTALL_PATH "@rpath"
+        PUBLIC_HEADER "${PUBLIC_HDRS}")
 else()
+    add_definitions(-DXML2_STATIC)
     add_library(${LIB_NAME} STATIC ${SRCS} ${PUBLIC_HDRS} ${PUBLIC_HDRS_LIBXML2} ${PRIVATE_HDRS})
-#    set_target_properties(${LIB_NAME} PROPERTIES SOVERSION 1)
 endif()
 
 target_link_extlibraries(${LIB_NAME})
 
-if (REGISTER_PACKAGE)
-    export(TARGETS ${LIB_NAME} FILE ${LIB_NAME}-exports.cmake)
-
-    set(EXPORT_PACKAGE_NAME LIBXML2)
-    set(EXPORT_PACKAGE_NAME_UPPER ${EXPORT_PACKAGE_NAME})
-    set(EXPORT_PACKAGE_LIB_NAME ${LIB_NAME})
-
-    export(PACKAGE ${EXPORT_PACKAGE_NAME})
-
-    include(CMakePackageConfigHelpers)
-    configure_package_config_file(
-        ${CMAKE_SOURCE_DIR}/cmake/PackageConfig.cmake.in
-        ${CMAKE_CURRENT_BINARY_DIR}/${EXPORT_PACKAGE_NAME}Config.cmake
-    INSTALL_DESTINATION ${CMAKE_CURRENT_BINARY_DIR} )
-    write_basic_package_version_file(
-        ${CMAKE_CURRENT_BINARY_DIR}/${EXPORT_PACKAGE_NAME}ConfigVersion.cmake
-        VERSION ${VERSION}
-        COMPATIBILITY AnyNewerVersion )
-else()
-    export(TARGETS ${LIB_NAME} FILE ${LIB_NAME}-exports.cmake EXPORT_LINK_INTERFACE_LIBRARIES)
-endif()
-add_custom_target(uninstall COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
-
-if(NOT CYGWIN)
-    set_target_properties(${LIB_NAME} PROPERTIES VERSION ${VERSION})
-endif()
-
-if(UNIX)
-    # On unix-like platforms the library is almost always called lib${PROJECT_NAME}
-    set_target_properties(${LIB_NAME} PROPERTIES OUTPUT_NAME ${PROJECT_NAME})
-    #if(NOT APPLE AND BUILD_SHARED_LIBS)
-    #    set_target_properties(${LIB_NAME} PROPERTIES LINK_FLAGS "-Wl,--version-script,\"${CMAKE_CURRENT_SOURCE_DIR}/libxml2.map\"")
-    #endif()
-endif()
+set(PACKAGE_NAME ${PROJECT_NAME})
+string(TOUPPER ${PACKAGE_NAME} PACKAGE_UPPER_NAME)
 
 if(NOT SKIP_INSTALL_LIBRARIES AND NOT SKIP_INSTALL_ALL )
     install(TARGETS ${LIB_NAME}
-        RUNTIME DESTINATION "${INSTALL_BIN_DIR}"
-        ARCHIVE DESTINATION "${INSTALL_LIB_DIR}"
-        LIBRARY DESTINATION "${INSTALL_LIB_DIR}" )
+        EXPORT ${PACKAGE_UPPER_NAME}Targets
+        RUNTIME DESTINATION ${INSTALL_BIN_DIR}
+        LIBRARY DESTINATION ${INSTALL_LIB_DIR}
+        ARCHIVE DESTINATION ${INSTALL_LIB_DIR}
+        INCLUDES DESTINATION ${INSTALL_INC_DIR}
+        FRAMEWORK DESTINATION ${INSTALL_LIB_DIR}
+    )
 endif()
+
 if(NOT SKIP_INSTALL_HEADERS AND NOT SKIP_INSTALL_ALL )
-    install(FILES ${PUBLIC_HDRS} DESTINATION "${INSTALL_INC_DIR}")
-    install(FILES ${PUBLIC_HDRS_LIBXML2} DESTINATION "${INSTALL_INC_DIR}/libxml")
+    install(FILES ${PUBLIC_HDRS} DESTINATION "${INSTALL_INC_DIR}"  COMPONENT headers)
+    install(FILES ${PUBLIC_HDRS_LIBXML2} DESTINATION "${INSTALL_INC_DIR}/libxml"  COMPONENT headers)
 endif()
+
+
+# Testing ======================================================================
+enable_testing()
+if(BUILD_TESTING)
+    if(WIN32)
+        # TODO: Change to dll names
+        file(GLOB_RECURSE IMPORTED_WIN_DLLS ${CMAKE_BINARY_DIR}/third-party/install/bin/*.dll)
+        foreach(IMPORTED_WIN_DLL ${IMPORTED_WIN_DLLS})
+            add_custom_command(TARGET ${LIB_NAME}
+                                POST_BUILD
+                                COMMAND ${CMAKE_COMMAND} -E copy ${IMPORTED_WIN_DLL} $<TARGET_FILE_DIR:${LIB_NAME}>
+                                COMMENT "Copy ${IMPORTED_WIN_DLL}"
+                            )
+        endforeach()
+    endif()
+
+    file(COPY test DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+
+    set(check_PROGRAMS
+        testSchemas testRelax testSAX testHTML testXPath #testURI
+        testThreads # testC14N
+        testAutomata # testRegexp testReader
+        testapi testModule runtest runsuite testchar
+        testdict runxmlconf testrecurse testlimits
+    )
+
+    macro(XML2_TEST name)
+        add_executable(${name} ${name}.c)
+        target_link_libraries(${name} ${LIB_NAME})
+        add_test(${name} ${name})
+    endmacro()
+
+    foreach(TEST ${check_PROGRAMS})
+        xml2_test(${TEST})
+    endforeach()
+
+endif()
+
+# uninstall
+add_custom_target(uninstall COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
+
+# Export package ===============================================================
+
+# Add path to includes to build-tree export
+target_include_directories(${LIB_NAME} INTERFACE
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+)
+
+# Add all targets to the build-tree export set
+export(TARGETS ${LIB_NAME}
+    FILE ${PROJECT_BINARY_DIR}/${PACKAGE_UPPER_NAME}Targets.cmake)
+
+if(REGISTER_PACKAGE)
+    # Export the package for use from the build-tree
+    # (this registers the build-tree with a global CMake-registry)
+    export(PACKAGE ${PACKAGE_UPPER_NAME})
+endif()
+
+# Create the <Package>Config.cmake file
+configure_file(cmake/PackageConfig.cmake.in
+    ${PROJECT_BINARY_DIR}/${PACKAGE_UPPER_NAME}Config.cmake @ONLY)
+
+if(NOT SKIP_INSTALL_LIBRARIES AND NOT SKIP_INSTALL_ALL)
+    # Install the <Package>Config.cmake
+    install(FILES
+      ${PROJECT_BINARY_DIR}/${PACKAGE_UPPER_NAME}Config.cmake
+      DESTINATION ${INSTALL_CMAKECONF_DIR} COMPONENT dev)
+
+    # Install the export set for use with the install-tree
+    install(EXPORT ${PACKAGE_UPPER_NAME}Targets DESTINATION ${INSTALL_CMAKECONF_DIR} COMPONENT dev)
+endif()
+
+# Archiving ====================================================================
+
+set(CPACK_PACKAGE_NAME "${PACKAGE_NAME}")
+set(CPACK_PACKAGE_VENDOR "${PACKAGE_VENDOR}")
+set(CPACK_PACKAGE_VERSION "${VERSION}")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "${PACKAGE_NAME} Installation")
+set(CPACK_PACKAGE_RELOCATABLE TRUE)
+set(CPACK_ARCHIVE_COMPONENT_INSTALL ON)
+set(CPACK_GENERATOR "ZIP")
+set(CPACK_MONOLITHIC_INSTALL ON)
+set(CPACK_STRIP_FILES TRUE)
+
+# Get cpack zip archive name
+get_cpack_filename(${VERSION} PROJECT_CPACK_FILENAME)
+set(CPACK_PACKAGE_FILE_NAME ${PROJECT_CPACK_FILENAME})
+
+include(CPack)

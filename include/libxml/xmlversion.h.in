@@ -61,8 +61,14 @@ XMLPUBFUN void XMLCALL xmlCheckVersion(int version);
 #define LIBXML_TEST_VERSION xmlCheckVersion(@LIBXML_VERSION_NUMBER@);
 
 #ifndef VMS
-#cmakedefine WITH_TRIO 1
-#ifndef WITH_TRIO
+#if @WITH_TRIO@
+/**
+ * WITH_TRIO:
+ *
+ * defined if the trio support need to be configured in
+ */
+#define WITH_TRIO
+#else
 /**
  * WITHOUT_TRIO:
  *
@@ -84,13 +90,10 @@ XMLPUBFUN void XMLCALL xmlCheckVersion(int version);
  *
  * Whether the thread support is configured in
  */
-#cmakedefine WITH_THREADS 1  
-#ifdef WITH_THREADS
+#if @WITH_THREADS@
 #if defined(_REENTRANT) || defined(__MT__) || \
     (defined(_POSIX_C_SOURCE) && (_POSIX_C_SOURCE - 0 >= 199506L))
-#ifndef LIBXML_THREAD_ENABLED
-    #define LIBXML_THREAD_ENABLED
-#endif //     LIBXML_THREAD_ENABLED
+#define LIBXML_THREAD_ENABLED
 #endif
 #endif
 
@@ -99,8 +102,7 @@ XMLPUBFUN void XMLCALL xmlCheckVersion(int version);
  *
  * Whether the allocation hooks are per-thread
  */
-#cmakedefine WITH_THREAD_ALLOC 1  
-#ifdef WITH_THREAD_ALLOC
+#if @WITH_THREAD_ALLOC@
 #define LIBXML_THREAD_ALLOC_ENABLED
 #endif
 
@@ -109,8 +111,7 @@ XMLPUBFUN void XMLCALL xmlCheckVersion(int version);
  *
  * Whether the DOM like tree manipulation API support is configured in
  */
-#cmakedefine WITH_TREE 1  
-#ifdef WITH_TREE
+#if @WITH_TREE@
 #define LIBXML_TREE_ENABLED
 #endif
 
@@ -119,8 +120,7 @@ XMLPUBFUN void XMLCALL xmlCheckVersion(int version);
  *
  * Whether the serialization/saving support is configured in
  */
-#cmakedefine WITH_OUTPUT 1  
-#ifdef WITH_OUTPUT
+#if @WITH_OUTPUT@
 #define LIBXML_OUTPUT_ENABLED
 #endif
 
@@ -129,8 +129,7 @@ XMLPUBFUN void XMLCALL xmlCheckVersion(int version);
  *
  * Whether the push parsing interfaces are configured in
  */
-#cmakedefine WITH_PUSH 1  
-#ifdef WITH_PUSH
+#if @WITH_PUSH@
 #define LIBXML_PUSH_ENABLED
 #endif
 
@@ -139,8 +138,7 @@ XMLPUBFUN void XMLCALL xmlCheckVersion(int version);
  *
  * Whether the xmlReader parsing interface is configured in
  */
-#cmakedefine WITH_READER 1  
-#ifdef WITH_READER
+#if @WITH_READER@
 #define LIBXML_READER_ENABLED
 #endif
 
@@ -149,8 +147,7 @@ XMLPUBFUN void XMLCALL xmlCheckVersion(int version);
  *
  * Whether the xmlPattern node selection interface is configured in
  */
-#cmakedefine WITH_PATTERN 1  
-#ifdef WITH_PATTERN
+#if @WITH_PATTERN@
 #define LIBXML_PATTERN_ENABLED
 #endif
 
@@ -159,8 +156,7 @@ XMLPUBFUN void XMLCALL xmlCheckVersion(int version);
  *
  * Whether the xmlWriter saving interface is configured in
  */
-#cmakedefine WITH_WRITER 1  
-#ifdef WITH_WRITER
+#if @WITH_WRITER@
 #define LIBXML_WRITER_ENABLED
 #endif
 
@@ -169,8 +165,7 @@ XMLPUBFUN void XMLCALL xmlCheckVersion(int version);
  *
  * Whether the older SAX1 interface is configured in
  */
-#cmakedefine WITH_SAX1 1  
-#ifdef WITH_SAX1
+#if @WITH_SAX1@
 #define LIBXML_SAX1_ENABLED
 #endif
 
@@ -179,8 +174,7 @@ XMLPUBFUN void XMLCALL xmlCheckVersion(int version);
  *
  * Whether the FTP support is configured in
  */
-#cmakedefine WITH_FTP 1  
-#ifdef WITH_FTP 
+#if @WITH_FTP@
 #define LIBXML_FTP_ENABLED
 #endif
 
@@ -189,8 +183,7 @@ XMLPUBFUN void XMLCALL xmlCheckVersion(int version);
  *
  * Whether the HTTP support is configured in
  */
-#cmakedefine WITH_HTTP 1  
-#ifdef WITH_HTTP 
+#if @WITH_HTTP@
 #define LIBXML_HTTP_ENABLED
 #endif
 
@@ -199,8 +192,7 @@ XMLPUBFUN void XMLCALL xmlCheckVersion(int version);
  *
  * Whether the DTD validation support is configured in
  */
-#cmakedefine WITH_VALID 1  
-#ifdef WITH_VALID 
+#if @WITH_VALID@
 #define LIBXML_VALID_ENABLED
 #endif
 
@@ -209,8 +201,7 @@ XMLPUBFUN void XMLCALL xmlCheckVersion(int version);
  *
  * Whether the HTML support is configured in
  */
-#cmakedefine WITH_HTML 1  
-#ifdef WITH_HTML 
+#if @WITH_HTML@
 #define LIBXML_HTML_ENABLED
 #endif
 
@@ -219,8 +210,7 @@ XMLPUBFUN void XMLCALL xmlCheckVersion(int version);
  *
  * Whether the deprecated APIs are compiled in for compatibility
  */
-#cmakedefine WITH_LEGACY 1  
-#ifdef WITH_LEGACY
+#if @WITH_LEGACY@
 #define LIBXML_LEGACY_ENABLED
 #endif
 
@@ -229,8 +219,7 @@ XMLPUBFUN void XMLCALL xmlCheckVersion(int version);
  *
  * Whether the Canonicalization support is configured in
  */
-#cmakedefine WITH_C14N 1  
-#ifdef WITH_C14N
+#if @WITH_C14N@
 #define LIBXML_C14N_ENABLED
 #endif
 
@@ -239,8 +228,7 @@ XMLPUBFUN void XMLCALL xmlCheckVersion(int version);
  *
  * Whether the Catalog support is configured in
  */
-#cmakedefine WITH_CATALOG 1  
-#ifdef WITH_CATALOG
+#if @WITH_CATALOG@
 #define LIBXML_CATALOG_ENABLED
 #endif
 
@@ -249,8 +237,7 @@ XMLPUBFUN void XMLCALL xmlCheckVersion(int version);
  *
  * Whether the SGML Docbook support is configured in
  */
-#cmakedefine WITH_DOCB 1  
-#ifdef WITH_DOCB
+#if @WITH_DOCB@
 #define LIBXML_DOCB_ENABLED
 #endif
 
@@ -259,8 +246,7 @@ XMLPUBFUN void XMLCALL xmlCheckVersion(int version);
  *
  * Whether XPath is configured in
  */
-#cmakedefine WITH_XPATH 1  
-#ifdef WITH_XPATH
+#if @WITH_XPATH@
 #define LIBXML_XPATH_ENABLED
 #endif
 
@@ -269,8 +255,7 @@ XMLPUBFUN void XMLCALL xmlCheckVersion(int version);
  *
  * Whether XPointer is configured in
  */
-#cmakedefine WITH_XPTR 1  
-#ifdef WITH_XPTR
+#if @WITH_XPTR@
 #define LIBXML_XPTR_ENABLED
 #endif
 
@@ -279,8 +264,7 @@ XMLPUBFUN void XMLCALL xmlCheckVersion(int version);
  *
  * Whether XInclude is configured in
  */
-#cmakedefine WITH_XINCLUDE 1  
-#ifdef WITH_XINCLUDE
+#if @WITH_XINCLUDE@
 #define LIBXML_XINCLUDE_ENABLED
 #endif
 
@@ -289,8 +273,7 @@ XMLPUBFUN void XMLCALL xmlCheckVersion(int version);
  *
  * Whether iconv support is available
  */
-#cmakedefine WITH_ICONV 1  
-#ifdef WITH_ICONV
+#if @WITH_ICONV@
 #define LIBXML_ICONV_ENABLED
 #endif
 
@@ -299,8 +282,7 @@ XMLPUBFUN void XMLCALL xmlCheckVersion(int version);
  *
  * Whether icu support is available
  */
-#cmakedefine WITH_ICU 1  
-#ifdef WITH_ICU
+#if @WITH_ICU@
 #define LIBXML_ICU_ENABLED
 #endif
 
@@ -309,8 +291,7 @@ XMLPUBFUN void XMLCALL xmlCheckVersion(int version);
  *
  * Whether ISO-8859-* support is made available in case iconv is not
  */
-#cmakedefine WITH_ISO8859X 1  
-#ifdef WITH_ISO8859X
+#if @WITH_ISO8859X@
 #define LIBXML_ISO8859X_ENABLED
 #endif
 
@@ -319,8 +300,7 @@ XMLPUBFUN void XMLCALL xmlCheckVersion(int version);
  *
  * Whether Debugging module is configured in
  */
-#cmakedefine WITH_DEBUG 1  
-#ifdef WITH_DEBUG
+#if @WITH_DEBUG@
 #define LIBXML_DEBUG_ENABLED
 #endif
 
@@ -329,8 +309,7 @@ XMLPUBFUN void XMLCALL xmlCheckVersion(int version);
  *
  * Whether the memory debugging is configured in
  */
-#cmakedefine WITH_MEM_DEBUG 1  
-#ifdef WITH_MEM_DEBUG
+#if @WITH_MEM_DEBUG@
 #define DEBUG_MEMORY_LOCATION
 #endif
 
@@ -339,8 +318,7 @@ XMLPUBFUN void XMLCALL xmlCheckVersion(int version);
  *
  * Whether the runtime debugging is configured in
  */
-#cmakedefine WITH_RUN_DEBUG 1  
-#ifdef WITH_RUN_DEBUG
+#if @WITH_RUN_DEBUG@
 #define LIBXML_DEBUG_RUNTIME
 #endif
 
@@ -349,8 +327,7 @@ XMLPUBFUN void XMLCALL xmlCheckVersion(int version);
  *
  * Whether the Unicode related interfaces are compiled in
  */
-#cmakedefine WITH_REGEXPS 1  
-#ifdef WITH_REGEXPS
+#if @WITH_REGEXPS@
 #define LIBXML_UNICODE_ENABLED
 #endif
 
@@ -359,8 +336,7 @@ XMLPUBFUN void XMLCALL xmlCheckVersion(int version);
  *
  * Whether the regular expressions interfaces are compiled in
  */
-#cmakedefine WITH_REGEXPS 1  
-#ifdef WITH_REGEXPS
+#if @WITH_REGEXPS@
 #define LIBXML_REGEXP_ENABLED
 #endif
 
@@ -369,8 +345,7 @@ XMLPUBFUN void XMLCALL xmlCheckVersion(int version);
  *
  * Whether the automata interfaces are compiled in
  */
-#cmakedefine WITH_REGEXPS 1  
-#ifdef WITH_REGEXPS
+#if @WITH_REGEXPS@
 #define LIBXML_AUTOMATA_ENABLED
 #endif
 
@@ -379,8 +354,7 @@ XMLPUBFUN void XMLCALL xmlCheckVersion(int version);
  *
  * Whether the formal expressions interfaces are compiled in
  */
-#cmakedefine WITH_SCHEMAS 1  
-#ifdef WITH_SCHEMAS
+#if @WITH_SCHEMAS@
 #define LIBXML_EXPR_ENABLED
 #endif
 
@@ -389,8 +363,7 @@ XMLPUBFUN void XMLCALL xmlCheckVersion(int version);
  *
  * Whether the Schemas validation interfaces are compiled in
  */
-#cmakedefine WITH_SCHEMAS 1  
-#ifdef WITH_SCHEMAS
+#if @WITH_SCHEMAS@
 #define LIBXML_SCHEMAS_ENABLED
 #endif
 
@@ -399,8 +372,7 @@ XMLPUBFUN void XMLCALL xmlCheckVersion(int version);
  *
  * Whether the Schematron validation interfaces are compiled in
  */
-#cmakedefine WITH_SCHEMATRON 1  
-#ifdef WITH_SCHEMATRON
+#if @WITH_SCHEMATRON@
 #define LIBXML_SCHEMATRON_ENABLED
 #endif
 
@@ -409,8 +381,7 @@ XMLPUBFUN void XMLCALL xmlCheckVersion(int version);
  *
  * Whether the module interfaces are compiled in
  */
-#cmakedefine WITH_MODULES 1  
-#ifdef WITH_MODULES
+#if @WITH_MODULES@
 #define LIBXML_MODULES_ENABLED
 /**
  * LIBXML_MODULE_EXTENSION:
@@ -425,8 +396,7 @@ XMLPUBFUN void XMLCALL xmlCheckVersion(int version);
  *
  * Whether the Zlib support is compiled in
  */
-#cmakedefine WITH_ZLIB
-#ifdef WITH_ZLIB
+#if @WITH_ZLIB@
 #define LIBXML_ZLIB_ENABLED
 #endif
 
@@ -435,8 +405,7 @@ XMLPUBFUN void XMLCALL xmlCheckVersion(int version);
  *
  * Whether the Lzma support is compiled in
  */
-#cmakedefine WITH_LibLZMA 
-#ifdef WITH_LibLZMA
+#if @WITH_LZMA@
 #define LIBXML_LZMA_ENABLED
 #endif
 

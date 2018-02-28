@@ -20,10 +20,7 @@
 # along with this script.  If not, see <http://www.gnu.org/licenses/>.
 ################################################################################
 
-set(repo_name lib_lzma)
-set(repo_project lzma)
-set(repo_include)
 
-if(NOT find_extproject_SHARED)
-    add_definitions(-DLZMA_API_STATIC)
-endif()
+set(repo nextgis-borsch/lib_lzma)
+set(repo_type github)
+# set(repo_branch master) # No need to set as master is default value

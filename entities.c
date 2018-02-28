@@ -6,6 +6,11 @@
  * daniel@veillard.com
  */
 
+/* To avoid EBCDIC trouble when parsing on zOS */
+#if defined(__MVS__)
+#pragma convert("ISO8859-1")
+#endif
+
 #define IN_LIBXML
 #include "libxml.h"
 
@@ -83,7 +88,7 @@ xmlEntitiesErrMemory(const char *extra)
  *
  * Handle an out of memory condition
  */
-static void
+static void LIBXML_ATTR_FORMAT(2,0)
 xmlEntitiesErr(xmlParserErrors code, const char *msg)
 {
     __xmlSimpleError(XML_FROM_TREE, code, NULL, msg, NULL);

@@ -1,9 +1,9 @@
 #! /bin/sh
 
-prefix=@CMAKE_INSTALL_PREFIX@
-exec_prefix=@CMAKE_INSTALL_PREFIX@
-includedir=@INSTALL_INC_DIR@
-libdir=@INSTALL_LIB_DIR@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+includedir=@includedir@
+libdir=@libdir@
 
 usage()
 {

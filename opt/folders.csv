@@ -1,0 +1,16 @@
+.,.,,"AUTHORS,h,c,ChangeLog,ac,Copyright,README,in"
+bakefile,bakefile,skip,
+doc,doc,skip,
+example,example,skip,
+include,include,,h
+include/libxml,include/libxml,,"h,in"
+macos,macos,skip,
+optim,optim,skip,
+os400,os400,skip,
+python,python,skip,
+result,result,skip,
+test/threads,test/threads,,xml
+vms,vms,skip,
+VxWorks,VxWorks,skip,
+win32,win32,,src
+xstc,xstc,skip,
