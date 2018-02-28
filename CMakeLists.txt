@@ -161,8 +161,11 @@ elseif(WIN32)
 endif()
 
 if(WITH_THREADS)
-  find_package(Threads REQUIRED)
-  list(APPEND TARGET_LINK_LIB ${CMAKE_THREAD_LIBS_INIT})
+    find_package(Threads REQUIRED)
+    list(APPEND TARGET_LINK_LIB ${CMAKE_THREAD_LIBS_INIT})
+    if(THREADS_FOUND)
+        add_definitions(-DLIBXML_THREAD_ENABLED)
+    endif()
 endif()
 
 find_anyproject(ZLIB)
@@ -447,8 +450,8 @@ endif()
 enable_testing()
 if(BUILD_TESTING)
     if(WIN32)
-        # TODO: Change to dll names
-        file(GLOB_RECURSE IMPORTED_WIN_DLLS ${CMAKE_BINARY_DIR}/third-party/install/bin/*.dll)
+        # TODO: Works only for precompiled versions
+        file(GLOB_RECURSE IMPORTED_WIN_DLLS ${CMAKE_BINARY_DIR}/third-party/install/*.dll)
         foreach(IMPORTED_WIN_DLL ${IMPORTED_WIN_DLLS})
             add_custom_command(TARGET ${LIB_NAME}
                                 POST_BUILD
