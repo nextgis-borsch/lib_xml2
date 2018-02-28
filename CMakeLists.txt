@@ -3,7 +3,7 @@
 # Purpose:  CMake build scripts
 # Author:   Dmitry Baryshnikov, dmitry.baryshnikov@nexgis.com
 ################################################################################
-# Copyright (C) 2015, NextGIS <info@nextgis.com>
+# Copyright (C) 2015-2018, NextGIS <info@nextgis.com>
 #
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the "Software"),
@@ -163,9 +163,6 @@ endif()
 if(WITH_THREADS)
   find_package(Threads REQUIRED)
   list(APPEND TARGET_LINK_LIB ${CMAKE_THREAD_LIBS_INIT})
-  if(THREADS_FOUND)
-    add_definitions(-DLIBXML_THREAD_ENABLED)
-  endif()
 endif()
 
 find_anyproject(ZLIB)
@@ -207,7 +204,6 @@ set(PUBLIC_HDRS_LIBXML2
     ${CMAKE_CURRENT_BINARY_DIR}/include/libxml/xmlversion.h
     include/libxml/chvalid.h
     include/libxml/dict.h
-    include/libxml/DOCBparser.h
     include/libxml/encoding.h
     include/libxml/entities.h
     include/libxml/globals.h
@@ -285,6 +281,15 @@ set(SRCS
     schematron.c
     xzlib.c
 )
+
+if(WITH_DOCB)
+    set(SRCS ${SRCS}
+        DOCBparser.c
+    )
+    set(PUBLIC_HDRS_LIBXML2 ${PUBLIC_HDRS_LIBXML2}
+    include/libxml/DOCBparser.h
+    )
+endif()
 
 if(WITH_C14N)
     set(SRCS ${SRCS}
@@ -369,9 +374,18 @@ if(WIN32)
     )
 
     # generate def file
-    execute_process(COMMAND ${CMAKE_C_COMPILER_LAUNCHER}
-        ${CMAKE_C_FLAGS} win32/libxml2.def.src > ${CMAKE_CURRENT_BINARY_DIR}/libxml2.def
+    execute_process(COMMAND ${CMAKE_C_COMPILER} /P /EP /I${CMAKE_CURRENT_BINARY_DIR}/include /I${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/win32/libxml2.def.src
     )
+    file(STRINGS ${CMAKE_CURRENT_BINARY_DIR}/libxml2.def.i DEFS)
+    set(DEF_SRC)
+    foreach(DEF ${DEFS})
+        if(DEF AND NOT DEF STREQUAL "" AND NOT DEF STREQUAL "xmlDllMain")
+            set(DEF_SRC "${DEF_SRC}
+${DEF}")
+        endif()
+    endforeach()
+    file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/libxml2.def "${DEF_SRC}")
     set(SRCS ${SRCS}
         ${CMAKE_CURRENT_BINARY_DIR}/libxml2.def
     )
@@ -448,11 +462,17 @@ if(BUILD_TESTING)
 
     set(check_PROGRAMS
         testSchemas testRelax testSAX testHTML testXPath #testURI
-        testThreads # testC14N
+        # testC14N
         testAutomata # testRegexp testReader
-        testapi testModule runtest runsuite testchar
+        testModule runsuite testchar
         testdict runxmlconf testrecurse testlimits
     )
+
+    if(WIN32)
+        set(check_PROGRAMS ${check_PROGRAMS} testThreadsWin32)
+    else()
+        set(check_PROGRAMS ${check_PROGRAMS} testThreads testapi runtest)
+    endif()
 
     macro(XML2_TEST name)
         add_executable(${name} ${name}.c)
