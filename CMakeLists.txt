@@ -3,7 +3,7 @@
 # Purpose:  CMake build scripts
 # Author:   Dmitry Baryshnikov, dmitry.baryshnikov@nexgis.com
 ################################################################################
-# Copyright (C) 2015-2018, NextGIS <info@nextgis.com>
+# Copyright (C) 2015-2019, NextGIS <info@nextgis.com>
 #
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the "Software"),
@@ -447,18 +447,14 @@ endif()
 
 
 # Testing ======================================================================
-enable_testing()
-if(BUILD_TESTING)
+if(BUILD_TESTING AND NOT CMAKE_CROSSCOMPILING)
+    enable_testing()
     if(WIN32)
-        # TODO: Works only for precompiled versions
-        file(GLOB_RECURSE IMPORTED_WIN_DLLS ${CMAKE_BINARY_DIR}/third-party/install/*.dll)
-        foreach(IMPORTED_WIN_DLL ${IMPORTED_WIN_DLLS})
-            add_custom_command(TARGET ${LIB_NAME}
-                                POST_BUILD
-                                COMMAND ${CMAKE_COMMAND} -E copy ${IMPORTED_WIN_DLL} $<TARGET_FILE_DIR:${LIB_NAME}>
-                                COMMENT "Copy ${IMPORTED_WIN_DLL}"
-                            )
-        endforeach()
+        add_custom_command(TARGET ${LIB_NAME}
+            POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -DDST_PATH="$<TARGET_FILE_DIR:${LIB_NAME}>" -DSRC_PATH="${PROJECT_BINARY_DIR}" -P ${PROJECT_SOURCE_DIR}/cmake/test_dependency.cmake
+            COMMENT "Copy DLLs"
+        )
     endif()
 
     file(COPY test DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
