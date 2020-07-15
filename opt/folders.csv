@@ -1,4 +1,4 @@
-.,.,,"AUTHORS,h,c,ChangeLog,ac,Copyright,README"
+.,.,,"AUTHORS,h,c,ChangeLog,ac,Copyright,README,config.h.cmake.in"
 bakefile,bakefile,skip,
 doc,doc,skip,
 example,example,skip,
