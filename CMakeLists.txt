@@ -589,26 +589,26 @@ if(LIBXML2_WITH_TESTS)
 	endif()
 endif()
 
+add_custom_target(uninstall COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
+
+# Export package ===============================================================
+
 if(NOT SKIP_INSTALL_LIBRARIES AND NOT SKIP_INSTALL_ALL)
-    install(FILES ${LIBXML2_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/libxml2/libxml COMPONENT development)
+    install(FILES ${LIBXML2_HDRS} DESTINATION ${INSTALL_INC_DIR}/libxml COMPONENT development)
 endif()
 
 configure_file(include/libxml/xmlversion.h.in libxml/xmlversion.h)
 if(NOT SKIP_INSTALL_LIBRARIES AND NOT SKIP_INSTALL_ALL)
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libxml/xmlversion.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/libxml2/libxml COMPONENT development)
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libxml/xmlversion.h DESTINATION ${INSTALL_INC_DIR}/libxml COMPONENT development)
 endif()
 
 if(MSVC)
 	configure_file(include/libxml/xmlwin32version.h.in libxml/xmlwin32version.h)
     
     if(NOT SKIP_INSTALL_LIBRARIES AND NOT SKIP_INSTALL_ALL)
-        install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libxml/xmlwin32version.h DESTINATION ${INSTALL_INC_DIR}/libxml2/libxml COMPONENT development)
+        install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libxml/xmlwin32version.h DESTINATION ${INSTALL_INC_DIR}/libxml COMPONENT development)
     endif()
 endif()
-
-add_custom_target(uninstall COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
-
-# Export package ===============================================================
 
 # Add path to includes to build-tree export
 target_include_directories(${TARGETS} PUBLIC
