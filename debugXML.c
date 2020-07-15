@@ -289,7 +289,7 @@ xmlCtxtGenericNodeCheck(xmlDebugCtxtPtr ctxt, xmlNodePtr node) {
 	dict = doc->dict;
 	if ((dict == NULL) && (ctxt->nodict == 0)) {
 #if 0
-            /* deactivated right now as it raises too many errors */
+            /* desactivated right now as it raises too many errors */
 	    if (doc->type == XML_DOCUMENT_NODE)
 		xmlDebugErr(ctxt, XML_CHECK_NO_DICT,
 			    "Document has no dictionary\n");
@@ -1168,7 +1168,7 @@ xmlCtxtDumpDocHead(xmlDebugCtxtPtr ctxt, xmlDocPtr doc)
  * @output:  the FILE * for the output
  * @doc:  the document
  *
- * Dumps debug information concerning the document, not recursive
+ * Dumps debug information cncerning the document, not recursive
  */
 static void
 xmlCtxtDumpDocumentHead(xmlDebugCtxtPtr ctxt, xmlDocPtr doc)
@@ -1498,7 +1498,7 @@ xmlDebugDumpNodeList(FILE * output, xmlNodePtr node, int depth)
  * @output:  the FILE * for the output
  * @doc:  the document
  *
- * Dumps debug information concerning the document, not recursive
+ * Dumps debug information cncerning the document, not recursive
  */
 void
 xmlDebugDumpDocumentHead(FILE * output, xmlDocPtr doc)
@@ -2363,7 +2363,10 @@ xmlShellRNGValidate(xmlShellCtxtPtr sctxt, char *schemas,
     int ret;
 
     ctxt = xmlRelaxNGNewParserCtxt(schemas);
-    xmlRelaxNGSetParserErrors(ctxt, xmlGenericError, xmlGenericError, NULL);
+    xmlRelaxNGSetParserErrors(ctxt,
+	    (xmlRelaxNGValidityErrorFunc) fprintf,
+	    (xmlRelaxNGValidityWarningFunc) fprintf,
+	    stderr);
     relaxngschemas = xmlRelaxNGParse(ctxt);
     xmlRelaxNGFreeParserCtxt(ctxt);
     if (relaxngschemas == NULL) {
@@ -2372,7 +2375,10 @@ xmlShellRNGValidate(xmlShellCtxtPtr sctxt, char *schemas,
 	return(-1);
     }
     vctxt = xmlRelaxNGNewValidCtxt(relaxngschemas);
-    xmlRelaxNGSetValidErrors(vctxt, xmlGenericError, xmlGenericError, NULL);
+    xmlRelaxNGSetValidErrors(vctxt,
+	    (xmlRelaxNGValidityErrorFunc) fprintf,
+	    (xmlRelaxNGValidityWarningFunc) fprintf,
+	    stderr);
     ret = xmlRelaxNGValidateDoc(vctxt, sctxt->doc);
     if (ret == 0) {
 	fprintf(stderr, "%s validates\n", sctxt->filename);
@@ -2641,9 +2647,9 @@ xmlShellValidate(xmlShellCtxtPtr ctxt, char *dtd,
     int res = -1;
 
     if ((ctxt == NULL) || (ctxt->doc == NULL)) return(-1);
-    vctxt.userData = NULL;
-    vctxt.error = xmlGenericError;
-    vctxt.warning = xmlGenericError;
+    vctxt.userData = stderr;
+    vctxt.error = (xmlValidityErrorFunc) fprintf;
+    vctxt.warning = (xmlValidityWarningFunc) fprintf;
 
     if ((dtd == NULL) || (dtd[0] == 0)) {
         res = xmlValidateDocument(&vctxt, ctxt->doc);

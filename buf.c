@@ -1,7 +1,7 @@
 /*
  * buf.c: memory buffers for libxml2
  *
- * new buffer structures and entry points to simplify the maintenance
+ * new buffer structures and entry points to simplify the maintainance
  * of libxml2 and ensure we keep good control over memory allocations
  * and stay 64 bits clean.
  * The new entry point use the xmlBufPtr opaque structure and
@@ -396,7 +396,7 @@ xmlBufShrink(xmlBufPtr buf, size_t len) {
         ((buf->alloc == XML_BUFFER_ALLOC_IO) && (buf->contentIO != NULL))) {
 	/*
 	 * we just move the content pointer, but also make sure
-	 * the perceived buffer size has shrunk accordingly
+	 * the perceived buffer size has shrinked accordingly
 	 */
         buf->content += len;
 	buf->size -= len;
@@ -958,7 +958,7 @@ xmlBufAddHead(xmlBufPtr buf, const xmlChar *str, int len) {
 
 	if (start_buf > (unsigned int) len) {
 	    /*
-	     * We can add it in the space previously shrunk
+	     * We can add it in the space previously shrinked
 	     */
 	    buf->content -= len;
             memmove(&buf->content[0], str, len);
@@ -1204,10 +1204,10 @@ xmlBufferPtr
 xmlBufBackToBuffer(xmlBufPtr buf) {
     xmlBufferPtr ret;
 
-    if (buf == NULL)
+    if ((buf == NULL) || (buf->error))
         return(NULL);
     CHECK_COMPAT(buf)
-    if ((buf->error) || (buf->buffer == NULL)) {
+    if (buf->buffer == NULL) {
         xmlBufFree(buf);
         return(NULL);
     }
@@ -1307,7 +1307,7 @@ xmlBufGetInputBase(xmlBufPtr buf, xmlParserInputPtr input) {
     CHECK_COMPAT(buf)
     base = input->base - buf->content;
     /*
-     * We could do some pointer arithmetic checks but that's probably
+     * We could do some pointer arythmetic checks but that's probably
      * sufficient.
      */
     if (base > buf->size) {
