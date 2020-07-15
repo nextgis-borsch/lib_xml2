@@ -181,11 +181,6 @@ set(MODULE_EXTENSION "${CMAKE_SHARED_LIBRARY_SUFFIX}")
 if(MSVC)
 	configure_file(include/win32config.h config.h COPYONLY)
 else()
-	include(CheckIncludeFiles)
-	include(CheckStructHasMember)
-	include(CheckFunctionExists)
-	include(CheckSymbolExists)
-
 	check_c_source_compiles("
 		void __attribute__((destructor))
 		f(void) {}
@@ -448,6 +443,18 @@ set(
 	xpointer.c
 	xzlib.c
 )
+
+if(UNIX)
+	list(APPEND LIBXML2_SRCS win32/libxml2.rc)
+	file(
+		WRITE
+		${CMAKE_CURRENT_BINARY_DIR}/rcVersion.h
+		"#define LIBXML_MAJOR_VERSION ${LIBXML_MAJOR_VERSION}\n"
+		"#define LIBXML_MINOR_VERSION ${LIBXML_MINOR_VERSION}\n"
+		"#define LIBXML_MICRO_VERSION ${LIBXML_MICRO_VERSION}\n"
+		"#define LIBXML_DOTTED_VERSION \"${VERSION}\"\n"
+	)
+endif()
 
 if(LIBXML2_WITH_SAX1)
 	list(APPEND LIBXML2_SRCS DOCBparser.c)
