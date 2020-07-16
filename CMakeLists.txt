@@ -403,9 +403,6 @@ endif()
 
 if(BUILD_SHARED_LIBS)
     add_library(${LIB_NAME} SHARED ${SRCS} ${PUBLIC_HDRS} ${PUBLIC_HDRS_LIBXML2} ${PRIVATE_HDRS})
-    if(MSVC)
-        set_target_properties(${LIB_NAME} PROPERTIES IMPORT_SUFFIX "_i.lib")
-    endif()
 
     set_target_properties (${LIB_NAME} PROPERTIES
         VERSION ${VERSION}
