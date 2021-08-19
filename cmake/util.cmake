@@ -29,18 +29,12 @@ function(check_version major minor micro full num)
     set(VERSION_FILE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/configure.ac")
     # Read version information from configure.ac.
     file(READ "${VERSION_FILE_PATH}" _CONTENTS)
-    string(REGEX MATCH "LIBXML_MAJOR_VERSION=+([0-9]+)"
-      LIB_VERSION_MAJOR ${_CONTENTS})
-    string (REGEX MATCH "([0-9]+)"
-      LIB_VERSION_MAJOR ${LIB_VERSION_MAJOR})
-    string(REGEX MATCH "LIBXML_MINOR_VERSION=+([0-9]+)"
-        LIB_VERSION_MINOR ${_CONTENTS})
-    string (REGEX MATCH "([0-9]+)"
-        LIB_VERSION_MINOR ${LIB_VERSION_MINOR})
-    string(REGEX MATCH "LIBXML_MICRO_VERSION=+([0-9]+)"
-        LIB_VERSION_MICRO ${_CONTENTS})
-    string (REGEX MATCH "([0-9]+)"
-        LIB_VERSION_MICRO ${LIB_VERSION_MICRO})
+    string(REGEX MATCH "define\\(\\[MAJOR_VERSION\\], [0-9]+\\)" LIB_VERSION_MAJOR ${_CONTENTS})
+    string (REGEX MATCH "([0-9]+)" LIB_VERSION_MAJOR ${LIB_VERSION_MAJOR})
+    string(REGEX MATCH "define\\(\\[MINOR_VERSION\\], [0-9]+\\)" LIB_VERSION_MINOR ${_CONTENTS})
+    string (REGEX MATCH "([0-9]+)" LIB_VERSION_MINOR ${LIB_VERSION_MINOR})
+    string(REGEX MATCH "define\\(\\[MICRO_VERSION\\], [0-9]+\\)" LIB_VERSION_MICRO ${_CONTENTS})
+    string (REGEX MATCH "([0-9]+)" LIB_VERSION_MICRO ${LIB_VERSION_MICRO})
 
     string(REGEX MATCH "LIBXML_MICRO_VERSION_SUFFIX=+([0-9]+)"
         LIB_VERSION_MICRO_SUFFIX ${_CONTENTS})

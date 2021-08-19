@@ -2,6 +2,7 @@
 bakefile,bakefile,skip,
 doc,doc,skip,
 example,example,skip,
+fuzz,fuzz,skip,
 include,include,,h
 include/libxml,include/libxml,,"h,in"
 macos,macos,skip,
@@ -12,5 +13,5 @@ result,result,skip,
 test/threads,test/threads,,xml
 vms,vms,skip,
 VxWorks,VxWorks,skip,
-win32,win32,,src
+win32,win32,,"src,rc"
 xstc,xstc,skip,
