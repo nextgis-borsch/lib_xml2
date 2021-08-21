@@ -26,7 +26,6 @@ result/namespaces,result/namespaces,,*
 result/noent,result/noent,,*
 result/pattern,result/pattern,,*
 result/regexp,result/regexp,,*
-result/schemas,result/schemas,,*
 result/schematron,result/schematron,,*
 result/scripts,result/scripts,,*
 result/SVG,result/SVG,,*
@@ -47,7 +46,6 @@ test/namespaces,test/namespaces,,*
 test/pattern,test/pattern,,*
 test/recurse,test/recurse,,*
 test/regexp,test/regexp,,*
-test/schemas,test/schemas,,*
 test/schematron,test/schematron,,*
 test/scripts,test/scripts,,*
 test/SVG,test/SVG,,*
