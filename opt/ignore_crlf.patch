@@ -1,0 +1,27 @@
+diff --git a/runtest.c b/runtest.c
+index 0f178cb..384f947 100644
+--- a/runtest.c
++++ b/runtest.c
+@@ -89,6 +89,8 @@
+ #define WR_FLAGS	O_WRONLY | O_CREAT | O_TRUNC
+ #endif
+ 
++#define RD_FLAGS	O_RDONLY | O_TEXT
++
+ typedef int (*functest) (const char *filename, const char *result,
+                          const char *error, int options);
+ 
+@@ -689,11 +691,13 @@ static int compareFileMem(const char *filename, const char *mem, int size) {
+         fprintf(stderr, "failed to stat %s\n", filename);
+ 	return(-1);
+     }
++    /*
+     if (info.st_size != size) {
+         fprintf(stderr, "file %s is %ld bytes, result is %d bytes\n",
+ 	        filename, (long) info.st_size, size);
+         return(-1);
+     }
++    */
+     fd = open(filename, RD_FLAGS);
+     if (fd < 0) {
+ 	fprintf(stderr, "failed to open %s for reading", filename);
