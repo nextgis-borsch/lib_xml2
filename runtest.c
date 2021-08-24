@@ -89,7 +89,9 @@
 #define WR_FLAGS	O_WRONLY | O_CREAT | O_TRUNC
 #endif
 
-// #define RD_FLAGS	O_RDONLY | O_TEXT
+#ifdef O_TEXT
+#define RD_FLAGS	O_RDONLY | O_TEXT
+#endif
 
 typedef int (*functest) (const char *filename, const char *result,
                          const char *error, int options);
