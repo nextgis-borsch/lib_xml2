@@ -69,6 +69,10 @@ else()
     set(INSTALL_CMAKECONF_DIR ${CMAKE_INSTALL_DATADIR}/lib${PROJECT_NAME}/CMake CACHE INTERNAL "Installation directory for cmake config files" FORCE)
 endif()
 
+if(POLICY CMP0075)
+    cmake_policy(SET CMP0075 NEW)
+endif()
+
 include(util)
 # Version information
 check_version(LIBXML_MAJOR_VERSION LIBXML_MINOR_VERSION LIBXML_MICRO_VERSION PROJECT_VERSION_FULL PROJECT_VERSION_NUM)
