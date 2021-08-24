@@ -98,7 +98,7 @@ include(CMakePackageConfigHelpers)
 include(GNUInstallDirs)
 include(FindAnyProject)
 
-option(BUILD_SHARED_LIBS "Build shared libraries" ON)
+# option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 option(WITH_ICONV "Add ICONV support" ON)
 option(WITH_LZMA "Use liblzma" ON)
 option(WITH_ZLIB "Use libz" ON)
