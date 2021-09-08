@@ -481,8 +481,9 @@ if(BUILD_SHARED_LIBS)
         VERSION ${VERSION}
         DEFINE_SYMBOL XML2_DLL)
 elseif(OSX_FRAMEWORK)
-    add_library(${LIB_NAME} SHARED ${LIBXML2_HDRS} ${LIBXML2_SRCS})
-    set_property(SOURCE ${LIBXML2_HDRS}
+    set(INST_HDRS ${LIBXML2_HDRS} ${CMAKE_CURRENT_BINARY_DIR}/libxml/xmlversion.h)
+    add_library(${LIB_NAME} SHARED ${INST_HDRS} ${LIBXML2_SRCS})
+    set_property(SOURCE ${INST_HDRS}
         PROPERTY MACOSX_PACKAGE_LOCATION "Headers/libxml"
     )
     set_target_properties(${LIB_NAME} PROPERTIES
