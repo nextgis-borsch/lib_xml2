@@ -645,32 +645,32 @@ if(LIBXML2_WITH_TESTS)
 	endif()
 endif()
 
-configure_package_config_file(
-	libxml2-config.cmake.cmake.in libxml2-config.cmake
-	INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/libxml2-${VERSION}
-)
+# configure_package_config_file(
+# 	libxml2-config.cmake.cmake.in libxml2-config.cmake
+# 	INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/libxml2-${VERSION}
+# )
 
-if(NOT SKIP_INSTALL_HEADERS AND NOT SKIP_INSTALL_ALL)
-    install(
-	FILES ${CMAKE_CURRENT_BINARY_DIR}/libxml2-config.cmake
-	DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/libxml2-${VERSION}
-	COMPONENT development
-)
-endif()
+# if(NOT SKIP_INSTALL_HEADERS AND NOT SKIP_INSTALL_ALL)
+#     install(
+# 	FILES ${CMAKE_CURRENT_BINARY_DIR}/libxml2-config.cmake
+# 	DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/libxml2-${VERSION}
+# 	COMPONENT development
+# )
+# endif()
 
-write_basic_package_version_file(
-	${CMAKE_CURRENT_BINARY_DIR}/libxml2-config-version.cmake
-	VERSION ${VERSION}
-	COMPATIBILITY ExactVersion
-)
+# write_basic_package_version_file(
+# 	${CMAKE_CURRENT_BINARY_DIR}/libxml2-config-version.cmake
+# 	VERSION ${VERSION}
+# 	COMPATIBILITY ExactVersion
+# )
 
-if(NOT SKIP_INSTALL_HEADERS AND NOT SKIP_INSTALL_ALL)
-    install(
-        FILES ${CMAKE_CURRENT_BINARY_DIR}/libxml2-config-version.cmake
-        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/libxml2-${VERSION}
-        COMPONENT development
-    )
-endif()
+# if(NOT SKIP_INSTALL_HEADERS AND NOT SKIP_INSTALL_ALL)
+#     install(
+#         FILES ${CMAKE_CURRENT_BINARY_DIR}/libxml2-config-version.cmake
+#         DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/libxml2-${VERSION}
+#         COMPONENT development
+#     )
+# endif()
 
 configure_file(include/libxml/xmlversion.h.in libxml/xmlversion.h)
 if(NOT SKIP_INSTALL_HEADERS AND NOT SKIP_INSTALL_ALL)
